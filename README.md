@@ -108,5 +108,5 @@ pytest
 ---
 
 ## 8. 스크린샷
- ![alt text](이미지.png)
- ![alt text](<이미지 (1).png>)
+![alt text](img1.png)
+![alt text](img2.png)

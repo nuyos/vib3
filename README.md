@@ -108,6 +108,8 @@ pytest
 ---
 
 ## 8. 스크린샷
+<img width="483" height="803" alt="img1" src="https://github.com/user-attachments/assets/c4d64980-d455-48df-bfe2-0b4086a20d7c" />
+
 <img width="266" height="379" alt="img2" src="https://github.com/user-attachments/assets/1ac9742e-cd42-4a59-a96c-096c279a5889" />
 
 

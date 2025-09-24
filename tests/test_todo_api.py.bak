@@ -1,0 +1,81 @@
+﻿from __future__ import annotations
+
+from typing import Generator
+
+import pytest
+
+from app import app
+from todo_service.repository import todo_repo
+
+
+@pytest.fixture(autouse=True)
+def reset_repo() -> Generator[None, None, None]:
+    todo_repo.reset()
+    yield
+
+
+@pytest.fixture()
+def client():
+    app.config.update(TESTING=True)
+    with app.test_client() as client:
+        yield client
+
+
+def test_list_initially_empty(client):
+    response = client.get("/api/todos")
+    assert response.status_code == 200
+    assert response.get_json() == []
+
+
+def test_create_and_get(client):
+    create_resp = client.post("/api/todos", json={"title": "첫 번째 할 일"})
+    assert create_resp.status_code == 201
+    created = create_resp.get_json()
+    assert created["title"] == "첫 번째 할 일"
+    assert created["completed"] is False
+
+    todo_id = created["id"]
+    get_resp = client.get(f"/api/todos/{todo_id}")
+    assert get_resp.status_code == 200
+    assert get_resp.get_json()["title"] == "첫 번째 할 일"
+
+
+def test_put_replaces_fields(client):
+    create_resp = client.post(
+        "/api/todos",
+        json={"title": "원래 제목", "description": "원래 설명", "completed": False},
+    )
+    todo_id = create_resp.get_json()["id"]
+
+    put_resp = client.put(
+        f"/api/todos/{todo_id}",
+        json={"title": "새 제목", "description": "새 설명", "completed": True},
+    )
+    assert put_resp.status_code == 200
+    updated = put_resp.get_json()
+    assert updated["title"] == "새 제목"
+    assert updated["description"] == "새 설명"
+    assert updated["completed"] is True
+
+
+def test_patch_updates_selected_fields(client):
+    todo_id = client.post("/api/todos", json={"title": "일"}).get_json()["id"]
+
+    patch_resp = client.patch(
+        f"/api/todos/{todo_id}",
+        json={"description": "설명", "completed": True},
+    )
+    assert patch_resp.status_code == 200
+    patched = patch_resp.get_json()
+    assert patched["description"] == "설명"
+    assert patched["completed"] is True
+
+
+def test_delete_removes_item(client):
+    todo_id = client.post("/api/todos", json={"title": "삭제"}).get_json()["id"]
+
+    delete_resp = client.delete(f"/api/todos/{todo_id}")
+    assert delete_resp.status_code == 204
+
+    get_resp = client.get(f"/api/todos/{todo_id}")
+    assert get_resp.status_code == 404

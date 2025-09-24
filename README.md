@@ -107,5 +107,7 @@ pytest
 
 ---
 
-## 8. 스크린샷 / 데모 (선택)
-- (운영 환경이 있다면 캡처 또는 데모 GIF를 추가)
+## 8. 스크린샷
+<img width="266" height="379" alt="img2" src="https://github.com/user-attachments/assets/1ac9742e-cd42-4a59-a96c-096c279a5889" />
+
+
